@@ -4,6 +4,7 @@ import com.badlogic.gdx.backends.jogl.JoglApplication;
 
 public class MyCubeDesktop {
 	public static void main (String[] argv) {
-        new JoglApplication(new MyCube(), "My First Triangle", 480, 320, false);
+//        new JoglApplication(new MyOther(), "Moj objekt", 480, 320, false);
+        new JoglApplication(new MyCube(), "Moja kocka", 480, 320, false);
 	}
 }

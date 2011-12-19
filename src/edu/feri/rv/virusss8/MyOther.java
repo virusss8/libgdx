@@ -1,79 +1,57 @@
 package edu.feri.rv.virusss8;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
+
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.graphics.Mesh;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.VertexAttribute;
 import com.badlogic.gdx.graphics.VertexAttributes.Usage;
+import com.badlogic.gdx.graphics.g3d.loaders.obj.ObjLoader;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.Input;
 
-public class MyCube implements ApplicationListener {
-    private Mesh[] triangleMesh;
+public class MyOther implements ApplicationListener {
+    private Mesh[] mesh;
     private PerspectiveCamera camera;
     public static final float angle = new Float(0.2);
     float comX = new Float(0);
 	float comY = new Float(0);
 	float comZ = new Float(1.5);
-	float step = new Float(0.01);
+	float step = new Float(0.1);
     private Music music;
+    private Texture texture = null;
+    private Mesh world = null;
 
     @Override
     public void create() {
-        if (triangleMesh == null) {
-        	triangleMesh = new Mesh[6];
-        	
-        	for (int i = 0; i < 6; i++) {
-				triangleMesh[i] = new Mesh(true, 4, 4,
-						new VertexAttribute(Usage.Position, 3, "a_position"),
-						new VertexAttribute(Usage.ColorPacked, 4, "a_color"));
+    	if (mesh == null) {
 
-				triangleMesh[i].setIndices(new short[] { 0, 1, 2, 3 });
+			InputStream stream = null;
+			try {
+				stream = new FileInputStream(Gdx.files.internal("data/missile.obj").path());
+			} catch (FileNotFoundException e) {
+				e.printStackTrace();
 			}
+			world = ObjLoader.loadObj(stream, true);
 
-        	triangleMesh[0].setVertices(new float[] {
-        			0.5f, 0.5f, 0.5f, Color.toFloatBits(75, 0, 0, 255),
-        	        -0.5f, 0.5f, 0.5f, Color.toFloatBits(75, 0, 0, 255),
-        	        0.5f, -0.5f, 0.5f, Color.toFloatBits(75, 0, 0, 255),
-        	        -0.5f, -0.5f, 0.5f, Color.toFloatBits(75, 0, 0, 255) });
-        	 
-        	triangleMesh[1].setVertices(new float[] {
-        	        0.5f, 0.5f, -0.5f, Color.toFloatBits(128, 0, 0, 255),
-        	        -0.5f, 0.5f, -0.5f, Color.toFloatBits(128, 0, 0, 255),
-        	        0.5f, -0.5f, -0.5f,  Color.toFloatBits(128, 0, 0, 255),
-        	        -0.5f, -0.5f, -0.5f, Color.toFloatBits(128, 0, 0, 255) });
-        	 
-        	triangleMesh[2].setVertices(new float[] {
-        	        0.5f, 0.5f, -0.5f, Color.toFloatBits(0, 255, 0, 255),
-        	        -0.5f, 0.5f, -0.5f, Color.toFloatBits(0, 255, 0, 255),
-        	        0.5f, 0.5f, 0.5f, Color.toFloatBits(0, 255, 0, 255),
-        	        -0.5f, 0.5f, 0.5f, Color.toFloatBits(0, 255, 0, 255) });
-        	 
-        	triangleMesh[3].setVertices(new float[] {
-        	        0.5f, -0.5f, -0.5f, Color.toFloatBits(0, 96, 0, 255),
-        	        -0.5f, -0.5f, -0.5f, Color.toFloatBits(0, 96, 0, 255),
-        	        0.5f, -0.5f, 0.5f, Color.toFloatBits(0, 96, 0, 255),
-        	        -0.5f, -0.5f, 0.5f,  Color.toFloatBits(0, 96, 0, 255) });
-        	 
-            triangleMesh[4].setVertices(new float[] {
-        	        0.5f, 0.5f, 0.5f, Color.toFloatBits(0, 0, 101, 255),
-        	        0.5f, -0.5f, 0.5f, Color.toFloatBits(0, 0, 101, 255),
-        	        0.5f, 0.5f, -0.5f, Color.toFloatBits(0, 0, 101, 255),
-        	        0.5f, -0.5f, -0.5f, Color.toFloatBits(0, 0, 101, 255) });
-        	 
-            triangleMesh[5].setVertices(new float[] {
-        	        -0.5f, 0.5f, 0.5f, Color.toFloatBits(0, 0, 96, 255),
-        	        -0.5f, -0.5f, 0.5f, Color.toFloatBits(0, 0, 96, 255),
-        	        -0.5f, 0.5f, -0.5f, Color.toFloatBits(0, 0, 96, 255),
-        	        -0.5f, -0.5f, -0.5f, Color.toFloatBits(0, 0, 96, 255) });
-            }
-        Gdx.gl.glEnable(GL10.GL_DEPTH_TEST);
+			FileHandle imageFileHandle = Gdx.files.internal("data/woot.jpg"); 
+	        texture = new Texture(imageFileHandle);
+			mesh = new Mesh[6];
+			
+			Gdx.gl.glEnable(GL10.GL_DEPTH_TEST);
+			Gdx.gl10.glTranslatef(0.0f,0.0f,-3.0f);
+    	}
     }
 
     @Override
@@ -100,7 +78,7 @@ public class MyCube implements ApplicationListener {
 //			comX-=0.015;
 			rotate(-(4*angle)); // obrnemo tako da ne stoji na mestu ampak dejansko rotira
 		}
-		else if (Gdx.input.isKeyPressed(Input.Keys.PAGE_DOWN)) {
+		else if (Gdx.input.isKeyPressed(Input.Keys.PLUS)) {
 //			comZ+=0.015;
 			if(comX > 0) {
 				if(comZ > 0) {
@@ -121,7 +99,7 @@ public class MyCube implements ApplicationListener {
 				comX += step;
 			}
 		}
-		else if (Gdx.input.isKeyPressed(Input.Keys.PAGE_UP)) {
+		else if (Gdx.input.isKeyPressed(Input.Keys.MINUS)) {
 //			comZ-=0.015;
 			if(comX < 0) {
 				if(comZ < 0) {
@@ -150,20 +128,27 @@ public class MyCube implements ApplicationListener {
 		else if (Gdx.input.isKeyPressed(Input.Keys.C)) {
 			music.pause();
 		}
-    	
-    	rotateDefault();
 
+    	rotateDefault();
+    	
 		camera.position.set(comX, comY, comZ);
 		camera.lookAt(0, 0, 0);
-
+		
+		Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
+	    Gdx.graphics.getGL10().glEnable(GL10.GL_TEXTURE_2D);
 		camera.update();
 		camera.apply(Gdx.gl10);
 
-		Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
+		texture.bind();
+		world.render(GL10.GL_TRIANGLES);
+		
+		try {
+			Thread.sleep(16); // ~60FPS
+		} catch (InterruptedException e) {}
 
-		for (Mesh allMashes : triangleMesh) {
-			allMashes.render(GL10.GL_TRIANGLE_STRIP, 0, 4); //renderiraj vse stranice, ki so sestavljene iz dveh trikotnikov
-		}
+//		for (Mesh allMashes : triangleMesh) {
+//			allMashes.render(GL10.GL_TRIANGLE_STRIP, 0, 4); //renderiraj vse stranice, ki so sestavljene iz dveh trikotnikov
+//		}
     }
     
     private void rotate(float angleDeg) {
